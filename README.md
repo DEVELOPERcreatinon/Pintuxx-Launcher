@@ -57,7 +57,7 @@ Pintuxx Game Launcher is a modern, cross-platform game management application bu
 
 ### Development Installation
 ```bash
-git clone <repository-url>
+git clone https://github.com/DEVELOPERcreatinon/Pintuxx-Launcher.git
 cd pintuxx-launcher
 python launcher.py
 ```
