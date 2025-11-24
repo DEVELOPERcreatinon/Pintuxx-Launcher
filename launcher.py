@@ -16,6 +16,7 @@ from typing import Dict, List, Optional, Tuple
 import sys
 import subprocess
 import shutil
+import webbrowser
 
 class SecureRequestHandler:
     def __init__(self, base_url: str, verify_ssl: bool = True):
@@ -646,25 +647,136 @@ class PintuxxGameLauncher:
             self.game_manager.install_dir = Path(new_dir)
             self.load_games()
             messagebox.showinfo("Success", f"Installation directory changed to: {new_dir}")
+    def show_copyright(self):
+        copyright_text = """
+Copyright Notice - Pintuxx Game Launcher
+
+LAUNCHER SOFTWARE:
+© 2025 Pintuxx Games.  Developed by DeveloperCreation. All rights reserved.
+GitHub: https://github.com/DEVELOPERcreatinon
+This launcher application is my original work.
+
+THIRD-PARTY GAMES:
+• All games distributed through this launcher are property of their respective copyright holders
+• I claim NO ownership or rights to any games unless explicitly marked as "Created by me"
+• This launcher acts as a distribution platform only
+• Game titles, characters, logos, and assets belong to their original creators
+
+USER RESPONSIBILITY:
+• Users are responsible for ensuring they have rights to download and use content
+• By installing games, users acknowledge they understand copyright terms
+
+REMOVAL REQUESTS:
+If you are a copyright holder and want content removed, contact: superlohich@mail.ru
+We will promptly remove infringing content.
+
+Created games are clearly marked with author attribution.
+        """
+        self._show_clickable_message("Copyright Notice", copyright_text.strip())
 
     def show_about(self):
         about_text = f"""
-Pintuxx Game Launcher v{self.launcher_version}
-
-A modern game launcher with automatic updates,
-secure downloads, and easy game management.
-
-Features:
-• One-click game installation
-• Automatic updates
-• Secure file verification
-• Download management
-• Game uninstallation
-• Modern dark theme
-
-© 2025 Pintuxx Games. All rights reserved. Developed by developercreatinon
-        """
-        messagebox.showinfo("About", about_text.strip())
+    Pintuxx Game Launcher v{self.launcher_version}
+    
+    A modern game launcher with automatic updates,
+    secure downloads, and easy game management.
+    
+    Features:
+    • One-click game installation
+    • Automatic updates
+    • Secure file verification
+    • Download management
+    • Game uninstallation
+    • Modern dark theme
+    
+    © 2025 Pintuxx Games. All rights reserved.
+    Developed by: DeveloperCreation
+    GitHub: https://github.com/DEVELOPERcreatinon
+    """
+        # Создаем отдельное окно с возможностью копирования
+        self._show_clickable_message("About", about_text)
+    
+    def _show_clickable_message(self, title: str, text: str):
+        """Показать сообщение с кликабельными ссылками"""
+        top = tk.Toplevel(self.root)
+        top.title(title)
+        top.geometry("600x400")
+        top.configure(bg='#1a1a1a')
+        top.transient(self.root)
+        top.grab_set()
+        
+        # Текст с прокруткой
+        text_frame = ttk.Frame(top)
+        text_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        
+        text_widget = tk.Text(
+            text_frame, 
+            wrap='word', 
+            bg='#1a1a1a', 
+            fg='#ffffff',
+            font=('Segoe UI', 10),
+            borderwidth=0,
+            relief='flat',
+            cursor='arrow'
+        )
+        
+        scrollbar = ttk.Scrollbar(text_frame, orient='vertical', command=text_widget.yview)
+        text_widget.configure(yscrollcommand=scrollbar.set)
+        
+        text_widget.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side='right', fill='y')
+        
+        # Вставляем текст
+        text_widget.insert('1.0', text)
+        text_widget.config(state='normal')
+        
+        # Делаем ссылки кликабельными
+        self._make_links_clickable(text_widget)
+        
+        # Кнопка закрытия
+        ttk.Button(
+            top, 
+            text="Close", 
+            command=top.destroy,
+            style='Accent.TButton'
+        ).pack(pady=10)
+    
+    def _make_links_clickable(self, text_widget):
+        """Сделать ссылки в текстовом виджете кликабельными"""
+        # Находим URL в тексте
+        content = text_widget.get('1.0', 'end-1c')
+        import re
+        
+        # Ищем URL-адреса
+        urls = re.findall(r'https?://[^\s]+', content)
+        
+        for url in urls:
+            # Находим начало и конец URL в тексте
+            start_idx = content.find(url)
+            if start_idx != -1:
+                end_idx = start_idx + len(url)
+                
+                # Добавляем тег к URL
+                text_widget.tag_add(url, f"1.0+{start_idx}c", f"1.0+{end_idx}c")
+                text_widget.tag_config(url, foreground='#00d4ff', underline=True)
+                
+                # Привязываем обработчик клика
+                text_widget.tag_bind(url, '<Button-1>', lambda e, url=url: self._open_url(url))
+                text_widget.tag_bind(url, '<Enter>', lambda e: text_widget.config(cursor='hand2'))
+                text_widget.tag_bind(url, '<Leave>', lambda e: text_widget.config(cursor='arrow'))
+        
+        # Делаем текст только для чтения
+        text_widget.config(state='disabled')
+    
+    def _open_url(self, url: str):
+        """Открыть URL в браузере по умолчанию"""
+        try:
+            import webbrowser
+            webbrowser.open(url)
+            logging.info(f"Opened URL: {url}")
+        except Exception as e:
+            logging.error(f"Failed to open URL {url}: {e}")
+            messagebox.showerror("Error", f"Failed to open link: {e}")
 
     def show_changelog(self):
         changelog_text = """
@@ -697,33 +809,10 @@ SECURITY:
 
 Update your games and enjoy the new experience! 🎮
         """
-        messagebox.showinfo("Changelog", changelog_text.strip())
+        self._show_clickable_message("Changelog", changelog_text.strip())
 
 
-    def show_copyright(self):
-    copyright_text = """
-Copyright Notice - Pintuxx Game Launcher
 
-LAUNCHER SOFTWARE:
-© 2024 [Твое имя/ник]. All rights reserved.
-This launcher application is my original work.
-
-THIRD-PARTY GAMES:
-• All games distributed through this launcher are property of their respective copyright holders
-• I claim NO ownership or rights to any games unless explicitly marked as "Created by me"
-• This launcher acts as a distribution platform only
-• Game titles, characters, logos, and assets belong to their original creators
-
-USER RESPONSIBILITY:
-• Users are responsible for ensuring they have rights to download and use content
-• By installing games, users acknowledge they understand copyright terms
-
-REMOVAL REQUESTS:
-If you are a copyright holder and want content removed, contact: [email]
-We will promptly remove infringing content.
-
-Created games are clearly marked with author attribution.
-"""
     def run(self):
         self.root.mainloop()
 
