@@ -412,7 +412,8 @@ class PintuxxGameLauncher:
         menubar.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="About", command=self.show_about)
         help_menu.add_command(label="Changelog", command=self.show_changelog)
-
+        help_menu.add_command(label="Copyright", command=self.show_copyright)
+        
     def setup_main_frame(self):
         main_frame = ttk.Frame(self.root)
         main_frame.pack(fill='both', expand=True, padx=25, pady=20)
@@ -698,6 +699,31 @@ Update your games and enjoy the new experience! 🎮
         """
         messagebox.showinfo("Changelog", changelog_text.strip())
 
+
+    def show_copyright(self):
+    copyright_text = """
+Copyright Notice - Pintuxx Game Launcher
+
+LAUNCHER SOFTWARE:
+© 2024 [Твое имя/ник]. All rights reserved.
+This launcher application is my original work.
+
+THIRD-PARTY GAMES:
+• All games distributed through this launcher are property of their respective copyright holders
+• I claim NO ownership or rights to any games unless explicitly marked as "Created by me"
+• This launcher acts as a distribution platform only
+• Game titles, characters, logos, and assets belong to their original creators
+
+USER RESPONSIBILITY:
+• Users are responsible for ensuring they have rights to download and use content
+• By installing games, users acknowledge they understand copyright terms
+
+REMOVAL REQUESTS:
+If you are a copyright holder and want content removed, contact: [email]
+We will promptly remove infringing content.
+
+Created games are clearly marked with author attribution.
+"""
     def run(self):
         self.root.mainloop()
 
@@ -827,3 +853,4 @@ del "%~f0" >nul
 if __name__ == "__main__":
     launcher = PintuxxGameLauncher()
     launcher.run()
+
