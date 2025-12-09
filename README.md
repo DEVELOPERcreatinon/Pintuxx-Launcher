@@ -1,3 +1,5 @@
+Внимание: для людей из России может понадобится включить vpn (из-за блокировок cloudfare), или наоборот отлючить обходы (вроде Zapret-discord-youtube), сам сталкивался с такой проблемой.
+
 # Pintuxx Game Launcher - README
 
 ## Overview
