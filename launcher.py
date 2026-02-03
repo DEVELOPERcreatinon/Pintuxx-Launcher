@@ -258,7 +258,6 @@ class GameCard(QFrame):
         info_items = [
             f"📦 {self.game_data.get('file_size', 'N/A')} MB",
             f"💾 {self.game_data.get('required_ram', 'N/A')} GB RAM",
-            f"📅 {self.game_data.get('release_date', 'N/A')}"
         ]
         
         for item in info_items:
@@ -1036,3 +1035,4 @@ if __name__ == "__main__":
     launcher.show()
     
     sys.exit(app.exec())
+
